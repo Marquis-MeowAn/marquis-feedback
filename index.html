@@ -14,16 +14,40 @@
             align-items: center;
             height: 100vh;
             margin: 0;
+            overflow: hidden; /* 🟢 Prevents scrollbars if GIFs bleed off the edge */
         }
+
+        /* 🟢 The Background Collage Container */
+        #background-collage {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; /* Sits firmly behind the form */
+            pointer-events: none; /* Lets clicks pass through to the form */
+        }
+
+        /* 🟢 Individual GIF styling */
+        .collage-gif {
+            position: absolute;
+            object-fit: cover;
+            opacity: 0.15; /* Dimmed to blend into your dark theme */
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
         .container {
             background: #1e293b;
             padding: 40px;
             border-radius: 16px;
             border: 1px solid #334155;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
             max-width: 500px;
             width: 100%;
             text-align: center;
+            position: relative; /* 🟢 Needed for z-index */
+            z-index: 10; /* 🟢 Keeps your form securely above the GIFs */
         }
         h2 { margin-top: 0; color: #e2e8f0; }
         p { color: #94a3b8; font-size: 14px; margin-bottom: 24px; line-height: 1.5; }
@@ -55,6 +79,8 @@
 </head>
 <body>
 
+    <div id="background-collage"></div>
+
     <div class="container">
         <h2>The Marquis of Meow'An is in big trouble... 😼⚖️</h2>
         <p>If you have a quick second, let us know where Marquis failed in his noble duties to assist you. We are gathering evidence to put him on trial, and your testimony will decide his fate.</p>
@@ -72,5 +98,55 @@
         </form>
     </div>
 
+<script>
+        // 🚨 Updated paths to point inside the "img" folder
+        const gifUrls = [
+            'img/gif1.gif', 'img/gif2.gif', 'img/gif3.gif', 'img/gif4.gif', 'img/gif5.gif',
+            'img/gif6.gif', 'img/gif7.gif', 'img/gif8.gif', 'img/gif9.gif', 'img/gif10.gif',
+            'img/gif11.gif', 'img/gif12.gif', 'img/gif13.gif', 'img/gif14.gif', 'img/gif15.gif',
+            'img/gif16.gif', 'img/gif17.gif', 'img/gif18.gif', 'img/gif19.gif', 'img/gif20.gif',
+            'img/gif21.gif'
+        ];
+
+        const collage = document.getElementById('background-collage');
+
+        function createCollage() {
+            collage.innerHTML = ''; // Clear old layout before drawing
+
+            // 🟢 Render 45 images to make it super dense (it will loop through your 21 GIFs)
+            const totalImagesToRender = 45; 
+
+            for (let i = 0; i < totalImagesToRender; i++) {
+                const gif = document.createElement('img');
+                gif.className = 'collage-gif';
+                
+                // Randomly pick one of your 21 GIFs
+                const randomGif = gifUrls[Math.floor(Math.random() * gifUrls.length)];
+                gif.src = randomGif;
+
+                // Randomize sizes between 120px and 280px
+                const size = 120 + Math.random() * 160;
+                gif.style.width = size + 'px';
+                gif.style.height = size + 'px';
+                
+                // Pure random positioning (allowing them to bleed slightly off the edges)
+                const posX = Math.random() * window.innerWidth - (size / 2);
+                const posY = Math.random() * window.innerHeight - (size / 2);
+                
+                gif.style.left = posX + 'px';
+                gif.style.top = posY + 'px';
+
+                // Randomize tilt between -25 and 25 degrees for a chaotic look
+                const rotation = (Math.random() - 0.5) * 50;
+                gif.style.transform = `rotate(${rotation}deg)`;
+
+                collage.appendChild(gif);
+            }
+        }
+
+        // Run when the page loads, and recalculate if the user resizes the window
+        window.onload = createCollage;
+        window.onresize = createCollage; 
+    </script>
 </body>
 </html>
