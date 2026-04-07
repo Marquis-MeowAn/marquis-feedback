@@ -116,7 +116,7 @@
     </div>
 
     <script>
-        // 🚨 Replace these placeholders with the actual filenames of your 45 GIFs!
+        // 🚨 Your 27 unique GIFs
         const gifUrls = [
             'img/gif1.gif', 'img/gif2.gif', 'img/gif3.gif', 'img/gif4.gif', 'img/gif5.gif',
             'img/gif6.gif', 'img/gif7.gif', 'img/gif8.gif', 'img/gif9.gif', 'img/gif10.gif',
@@ -127,17 +127,17 @@
         ];
 
         const collage = document.getElementById('background-collage');
-        const totalImagesToRender = 45;
         let isInitialized = false;
 
         function updateCollage() {
             if (!isInitialized) {
-                for (let i = 0; i < totalImagesToRender; i++) {
+                // 🟢 FIXED: Loop exactly 27 times, using each GIF exactly once
+                for (let i = 0; i < gifUrls.length; i++) {
                     const gif = document.createElement('img');
                     gif.className = 'collage-gif';
                     
-                    const randomGif = gifUrls[Math.floor(Math.random() * gifUrls.length)];
-                    gif.src = randomGif;
+                    // Assigns each unique GIF in order (no random recycling!)
+                    gif.src = gifUrls[i]; 
                     
                     collage.appendChild(gif);
                 }
@@ -167,7 +167,7 @@
             setInterval(updateCollage, 5000); 
         };
         
-        window.onresize = updateCollage; 
+        window.onresize = updateCollage;
     </script>
 </body>
 </html>
