@@ -32,9 +32,15 @@
         .collage-gif {
             position: absolute;
             object-fit: cover;
-            opacity: 0.15; /* Dimmed to blend into your dark theme */
+            /*opacity: 0.15; /* Dimmed to blend into your dark theme */
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            /* 🟢 FIXED: Forces the browser to render the GIFs sharply instead of blurring them when resized */
+            image-rendering: pixelated; 
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            /* 🟢 Makes the repositioning smooth and floaty instead of a harsh snap */
+            transition: all 4.5s ease-in-out; 
         }
 
         .container {
@@ -49,6 +55,16 @@
             position: relative; /* 🟢 Needed for z-index */
             z-index: 10; /* 🟢 Keeps your form securely above the GIFs */
         }
+        
+        /* 🟢 NEW: Logo Styling */
+        .logo-img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 16px;
+            image-rendering: -webkit-optimize-contrast; /* Keeps the logo ultra-crisp */
+        }
+
         h2 { margin-top: 0; color: #e2e8f0; }
         p { color: #94a3b8; font-size: 14px; margin-bottom: 24px; line-height: 1.5; }
         textarea, input {
@@ -82,13 +98,14 @@
     <div id="background-collage"></div>
 
     <div class="container">
-        <h2>The Marquis of Meow'An is in big trouble... 😼⚖️</h2>
+        <img src="img/46087a1c-4b4d-4a36-a268-1b57cb06908c.png" alt="Marquis Logo" class="logo-img">
+        
+        <h2>The Marquis of Meow'An is in big trouble...</h2>
         <p>If you have a quick second, let us know where Marquis failed in his noble duties to assist you. We are gathering evidence to put him on trial, and your testimony will decide his fate.</p>
         
         <form action="https://api.web3forms.com/submit" method="POST">
             
             <input type="hidden" name="access_key" value="40c9596d-231b-4628-94c4-5403ae4b76b7">
-            
             <input type="hidden" name="redirect" value="https://web3forms.com/success">
 
             <input type="email" name="email" placeholder="Your Email (Optional)">
@@ -98,55 +115,62 @@
         </form>
     </div>
 
-<script>
-        // 🚨 Updated paths to point inside the "img" folder
+    <script>
+        // 🚨 Replace these placeholders with the actual filenames of your 45 GIFs!
         const gifUrls = [
             'img/gif1.gif', 'img/gif2.gif', 'img/gif3.gif', 'img/gif4.gif', 'img/gif5.gif',
             'img/gif6.gif', 'img/gif7.gif', 'img/gif8.gif', 'img/gif9.gif', 'img/gif10.gif',
             'img/gif11.gif', 'img/gif12.gif', 'img/gif13.gif', 'img/gif14.gif', 'img/gif15.gif',
             'img/gif16.gif', 'img/gif17.gif', 'img/gif18.gif', 'img/gif19.gif', 'img/gif20.gif',
-            'img/gif21.gif'
+            'img/gif21.gif', 'img/gif22.gif', 'img/gif23.gif', 'img/gif24.gif', 'img/gif25.gif',
+            'img/gif26.gif', 'img/gif27.gif', 'img/gif28.gif', 'img/gif29.gif', 'img/gif30.gif',
+            'img/gif31.gif', 'img/gif32.gif', 'img/gif33.gif', 'img/gif34.gif', 'img/gif35.gif',
+            'img/gif36.gif', 'img/gif37.gif', 'img/gif38.gif', 'img/gif39.gif', 'img/gif40.gif',
+            'img/gif41.gif', 'img/gif42.gif', 'img/gif43.gif', 'img/gif44.gif', 'img/gif45.gif',
         ];
 
         const collage = document.getElementById('background-collage');
+        const totalImagesToRender = 45;
+        let isInitialized = false;
 
-        function createCollage() {
-            collage.innerHTML = ''; // Clear old layout before drawing
+        function updateCollage() {
+            if (!isInitialized) {
+                for (let i = 0; i < totalImagesToRender; i++) {
+                    const gif = document.createElement('img');
+                    gif.className = 'collage-gif';
+                    
+                    const randomGif = gifUrls[Math.floor(Math.random() * gifUrls.length)];
+                    gif.src = randomGif;
+                    
+                    collage.appendChild(gif);
+                }
+                isInitialized = true;
+            }
 
-            // 🟢 Render 45 images to make it super dense (it will loop through your 21 GIFs)
-            const totalImagesToRender = 45; 
-
-            for (let i = 0; i < totalImagesToRender; i++) {
-                const gif = document.createElement('img');
-                gif.className = 'collage-gif';
-                
-                // Randomly pick one of your 21 GIFs
-                const randomGif = gifUrls[Math.floor(Math.random() * gifUrls.length)];
-                gif.src = randomGif;
-
-                // Randomize sizes between 120px and 280px
+            const gifs = document.querySelectorAll('.collage-gif');
+            
+            gifs.forEach(gif => {
                 const size = 120 + Math.random() * 160;
                 gif.style.width = size + 'px';
                 gif.style.height = size + 'px';
                 
-                // Pure random positioning (allowing them to bleed slightly off the edges)
                 const posX = Math.random() * window.innerWidth - (size / 2);
                 const posY = Math.random() * window.innerHeight - (size / 2);
                 
                 gif.style.left = posX + 'px';
                 gif.style.top = posY + 'px';
 
-                // Randomize tilt between -25 and 25 degrees for a chaotic look
                 const rotation = (Math.random() - 0.5) * 50;
                 gif.style.transform = `rotate(${rotation}deg)`;
-
-                collage.appendChild(gif);
-            }
+            });
         }
 
-        // Run when the page loads, and recalculate if the user resizes the window
-        window.onload = createCollage;
-        window.onresize = createCollage; 
+        window.onload = () => {
+            updateCollage();
+            setInterval(updateCollage, 5000); 
+        };
+        
+        window.onresize = updateCollage; 
     </script>
 </body>
 </html>
